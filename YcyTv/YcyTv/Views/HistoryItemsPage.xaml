@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:viewModels="clr-namespace:YcyTv.ViewModels;assembly=YcyTv"
+             xmlns:xForms="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:models="clr-namespace:YcyTv.Models;assembly=YcyTv"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="YcyTv.Views.HistoryItemsPage"
+             x:DataType="viewModels:HistoryItemsPageViewModel"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="VideoImageStyle" TargetType="forms:CachedImage">
+                <Setter Property="Aspect" Value="Fill" />
+                <Setter Property="WidthRequest" Value="{OnPlatform Android=130,UWP=320}" />
+                <Setter Property="HeightRequest" Value="{OnPlatform Android=140,UWP=340}" />
+            </Style>
+            <Style x:Key="VideoTitleStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
+                <Setter Property="FontSize" Value="25" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Never">
+        <StackLayout Orientation="Vertical">
+            <xForms:SfListView
+            x:Name="VodPlayHistoryList"
+            Margin="30"
+            IsScrollingEnabled="{OnPlatform Android=False,UWP=True}"
+            SelectionMode="SingleDeselect"
+            SelectionGesture="Tap"
+            AutoFitMode="DynamicHeight"
+            ItemsSource="{Binding HistoryVodPlays}"
+            SelectionBackgroundColor="{StaticResource ItemColor}"
+            SelectionChangedCommand="{Binding ClickVodDetailCommand}"
+            SelectionChangedCommandParameter="{x:Reference VodPlayHistoryList}"
+            LoadMoreOption="AutoOnScroll"
+            LoadMoreCommand="{Binding VodListLoadMoreCommand}"
+            LoadMoreCommandParameter="{Binding Source={x:Reference VodPlayHistoryList}}">
+                <xForms:SfListView.LayoutManager>
+                    <xForms:GridLayout SpanCount="5" />
+                </xForms:SfListView.LayoutManager>
+                <xForms:SfListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:VodPlayModel">
+                        <ViewCell>
+                            <StackLayout Orientation="Vertical" Margin="5">
+                                <forms:CachedImage
+                                HorizontalOptions="Center"
+                                VerticalOptions="Start"
+                                DownsampleToViewSize="True"
+                                Style="{StaticResource VideoImageStyle}"
+                                CacheDuration="1"
+                                Source="{Binding VodPic}" />
+
+                                <Label Text="{Binding VodName}"
+                                   HorizontalOptions="{OnPlatform Android=StartAndExpand,UWP=CenterAndExpand}"
+                                   VerticalOptions="CenterAndExpand"
+                                   Style="{StaticResource VideoTitleStyle}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </xForms:SfListView.ItemTemplate>
+            </xForms:SfListView>
+            <StackLayout x:Name="NoData" 
+                         HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand">
+            <Label Text="暂无观看记录" Style="{StaticResource VideoTitleStyle}" HorizontalOptions="CenterAndExpand" VerticalOptions="CenterAndExpand" />
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>

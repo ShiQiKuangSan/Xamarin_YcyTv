@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:viewModels="clr-namespace:YcyTv.ViewModels;assembly=YcyTv"
+             xmlns:xForms="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:models="clr-namespace:YcyTv.Models;assembly=YcyTv"
+             xmlns:buttons="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="YcyTv.Views.VodDetailPage"
+             x:DataType="viewModels:VodDetailPageViewModel"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="VideoImageStyle" TargetType="forms:CachedImage">
+                <Setter Property="Aspect" Value="AspectFill" />
+                <Setter Property="WidthRequest" Value="{OnPlatform Android=200,UWP=320}" />
+                <Setter Property="HeightRequest" Value="{OnPlatform Android=220,UWP=340}" />
+            </Style>
+            <Style TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView VerticalScrollBarVisibility="Never" Orientation="Vertical">
+        <Grid RowDefinitions="Auto,Auto" x:Name="MainLoad" Margin="30" RowSpacing="0">
+            <Grid ColumnDefinitions="Auto,Auto" Grid.Row="0" ColumnSpacing="0">
+                <forms:CachedImage
+                Grid.Column="0"
+                HorizontalOptions="StartAndExpand"
+                VerticalOptions="StartAndExpand"
+                DownsampleToViewSize="True"
+                Style="{StaticResource VideoImageStyle}"
+                CacheDuration="1"
+                Source="{Binding Vod.VodPic}"
+                Margin="0,0,0,30" />
+                <StackLayout Grid.Column="1" Margin="10,0,0,0">
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="{Binding Vod.VodName}" FontSize="24" HorizontalOptions="Start" />
+                        <Label Text="{Binding Vod.VodSub}" FontSize="12" Margin="5,0,0,0" VerticalOptions="End"
+                           HorizontalOptions="StartAndExpand" />
+                    </StackLayout>
+                    <StackLayout Orientation="Horizontal">
+                        <Label Text="{Binding Vod.VodYear}" />
+                        <Label Text="{Binding Vod.VodArea}" Margin="20,0,0,0" />
+                    </StackLayout>
+                    <Label Text="{Binding Vod.VodDirector}" />
+                    <Label Text="{Binding Vod.VodContent}" MaxLines="7" LineBreakMode="TailTruncation" />
+                </StackLayout>
+            </Grid>
+            <StackLayout Grid.Row="1">
+                <StackLayout Orientation="Horizontal">
+                    <buttons:SfButton x:Name="UpdateUrlBtn" Clicked="UpdateUrlBtn_OnClicked"  Text="更新集数" TextColor="White" BackgroundColor="Transparent" BorderColor="{StaticResource ItemColor}" BorderWidth="4" />
+                    <Label Text="播放源" FontSize="24" VerticalTextAlignment="Center" Margin="10,0,0,0" />
+                </StackLayout>
+                <xForms:SfListView
+                    x:Name="VodPlayUrlList"
+                    SelectionMode="SingleDeselect"
+                    IsScrollingEnabled="{OnPlatform Android=False,UWP=True}"
+                    SelectionGesture="Tap"
+                    AutoFitMode="DynamicHeight"
+                    IsScrollBarVisible="{OnPlatform Android=False,UWP=True}"
+                    SelectionChangedCommand="{Binding VodPlayCommand}"
+                    SelectionChangedCommandParameter="{x:Reference VodPlayUrlList}"
+                    ItemsSource="{ Binding PlayUrls}"
+                    SelectionBackgroundColor="{StaticResource ItemColor}"
+                    Margin="0,10,0,0">
+                    <xForms:SfListView.LayoutManager>
+                        <xForms:GridLayout SpanCount="8" />
+                    </xForms:SfListView.LayoutManager>
+                    <xForms:SfListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:VodPlayUrlModel">
+                            <ViewCell>
+                                <Label Text="{Binding PlayName}" TextColor="White" FontSize="18"  Margin="5"
+                                       HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                            </ViewCell>
+                        </DataTemplate>
+                    </xForms:SfListView.ItemTemplate>
+                </xForms:SfListView>
+            </StackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:viewModels="clr-namespace:YcyTv.ViewModels;assembly=YcyTv"
+             xmlns:renderers="clr-namespace:YcyTv.Renderers;assembly=YcyTv"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             Title="{Binding Title}"
+             x:Class="YcyTv.Views.VodPlayPage"
+             x:DataType="viewModels:VodPlayPageViewModel">
+
+    <renderers:VideoPlayer x:Name="VodPlayer" Source="{Binding CuUrl.Play}" 
+                           VideoTitle="{Binding VodTitle}"
+                           HorizontalOptions="FillAndExpand" 
+                           VerticalOptions="FillAndExpand" 
+                           TimeElapsed="VideoPlayer_OnTimeElapsed" 
+                           TimeElapsedInterval="30" 
+                           PlayerStateChanged="VodPlayer_OnPlayerStateChanged" 
+                           Completed="VodPlayer_Completed" />
+</ContentPage>

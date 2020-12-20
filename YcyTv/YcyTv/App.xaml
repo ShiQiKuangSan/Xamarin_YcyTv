@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<dryIoc:PrismApplication xmlns="http://xamarin.com/schemas/2014/forms"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                      xmlns:dryIoc="http://prismlibrary.com"
+                      x:Class="YcyTv.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="BackgroundColor">#3E3E3E</Color>
+            <Color x:Key="ItemColor">#159C7F</Color>
+        </ResourceDictionary>
+    </Application.Resources>
+</dryIoc:PrismApplication>

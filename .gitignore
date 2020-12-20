@@ -1,0 +1,11 @@
+﻿################################################################################
+# 此 .gitignore 文件已由 Microsoft(R) Visual Studio 自动创建。
+################################################################################
+
+/.vs
+/YcyTv/YcyTv/bin
+/YcyTv/YcyTv/obj
+/YcyTv/YcyTv.Android/bin
+/YcyTv/YcyTv.Android/obj
+/YcyTv/YcyTv.UWP/bin/x86/Debug
+/YcyTv/YcyTv.UWP/obj

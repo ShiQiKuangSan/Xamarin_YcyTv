@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:prism="http://prismlibrary.com"
+             NavigationPage.HasNavigationBar="False"
+             xmlns:xForms="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:models="clr-namespace:YcyTv.Models;assembly=YcyTv"
+             xmlns:viewModels="clr-namespace:YcyTv.ViewModels;assembly=YcyTv"
+             prism:ViewModelLocator.AutowireViewModel="True"
+             x:Class="YcyTv.Views.TVListPage"
+             x:DataType="viewModels:TVListPageViewModel"
+             BackgroundColor="{StaticResource BackgroundColor}">
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <Style x:Key="VideoImageStyle" TargetType="forms:CachedImage">
+                <Setter Property="Aspect" Value="AspectFill" />
+                <Setter Property="WidthRequest" Value="{OnPlatform Android=130,UWP=320}" />
+                <Setter Property="HeightRequest" Value="{OnPlatform Android=140,UWP=340}" />
+            </Style>
+            <Style x:Key="VideoTitleStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="LineBreakMode" Value="TailTruncation" />
+                <Setter Property="MaxLines" Value="2" />
+                <Setter Property="WidthRequest" Value="150" />
+                <Setter Property="Margin" Value="6, 0" />
+            </Style>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+    <ScrollView>
+        <StackLayout>
+            <xForms:SfListView
+            x:Name="VodTypeList"
+            SelectionMode="Single"
+            SelectionGesture="Tap"
+            AutoFitMode="DynamicHeight"
+            HeightRequest="40"
+            IsScrollBarVisible="{OnPlatform Android=False,UWP=True}"
+            SelectionChangedCommand="{Binding VodTypeSelectionCommand}"
+            SelectionChangedCommandParameter="{x:Reference VodTypeList}"
+            ItemsSource="{ Binding VodTypes}"
+            SelectionBackgroundColor="{StaticResource ItemColor}"
+            Orientation="Horizontal">
+                <xForms:SfListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:VodTypeModel">
+                        <ViewCell>
+                            <Label Text="{Binding Name}" TextColor="White" FontSize="18" Margin="10,0,10,0"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                        </ViewCell>
+                    </DataTemplate>
+                </xForms:SfListView.ItemTemplate>
+            </xForms:SfListView>
+            <xForms:SfListView
+            x:Name="VodAreaList"
+            SelectionMode="Single"
+            SelectionGesture="Tap"
+            AutoFitMode="DynamicHeight"
+            HeightRequest="40"
+            IsScrollBarVisible="{OnPlatform Android=False,UWP=True}"
+            SelectionChangedCommand="{Binding VodTypeSelectionCommand}"
+            SelectionChangedCommandParameter="{x:Reference VodAreaList}"
+            ItemsSource="{ Binding VodAreas}"
+            SelectionBackgroundColor="{StaticResource ItemColor}"
+            Orientation="Horizontal">
+                <xForms:SfListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:VodAreaModel">
+                        <ViewCell>
+                            <Label Text="{Binding Name}" TextColor="White" FontSize="18" Margin="10,0,10,0"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                        </ViewCell>
+                    </DataTemplate>
+                </xForms:SfListView.ItemTemplate>
+            </xForms:SfListView>
+            <xForms:SfListView
+            x:Name="VodYearList"
+            SelectionMode="Single"
+            SelectionGesture="Tap"
+            AutoFitMode="DynamicHeight"
+            HeightRequest="40"
+            IsScrollBarVisible="{OnPlatform Android=False,UWP=True}"
+            SelectionChangedCommand="{Binding VodTypeSelectionCommand}"
+            SelectionChangedCommandParameter="{x:Reference VodYearList}"
+            ItemsSource="{ Binding VodYears}"
+            SelectionBackgroundColor="{StaticResource ItemColor}"
+            Orientation="Horizontal">
+                <xForms:SfListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:VodYearModel">
+                        <ViewCell>
+                            <Label Text="{Binding Name}" TextColor="White" FontSize="18" Margin="10,0,10,0"
+                               HorizontalTextAlignment="Center" VerticalTextAlignment="Center" />
+                        </ViewCell>
+                    </DataTemplate>
+                </xForms:SfListView.ItemTemplate>
+            </xForms:SfListView>
+            <xForms:SfListView
+            x:Name="TvVodPlayList"
+            IsVisible="True"
+            SelectionMode="SingleDeselect"
+            SelectionGesture="Tap"
+            AutoFitMode="DynamicHeight"
+            ItemsSource="{Binding VodPlays}"
+            SelectionBackgroundColor="{StaticResource ItemColor}"
+            SelectionChangedCommand="{Binding ClickVodDetailCommand}"
+            SelectionChangedCommandParameter="{x:Reference TvVodPlayList}"
+            LoadMoreOption="AutoOnScroll"
+            LoadMoreCommand="{Binding VodListLoadMoreCommand}"
+            LoadMoreCommandParameter="{Binding Source={x:Reference TvVodPlayList}}">
+                <xForms:SfListView.LayoutManager>
+                    <xForms:GridLayout SpanCount="5" />
+                </xForms:SfListView.LayoutManager>
+                <xForms:SfListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:VodPlayModel">
+                        <ViewCell>
+                            <StackLayout Orientation="Vertical" Margin="5">
+                                <forms:CachedImage
+                                HorizontalOptions="Center"
+                                VerticalOptions="Start"
+                                DownsampleToViewSize="True"
+                                Style="{StaticResource VideoImageStyle}"
+                                CacheDuration="1"
+                                Source="{Binding VodPic}" />
+
+                                <Label Text="{Binding VodName}"
+                                   HorizontalOptions="{OnPlatform Android=StartAndExpand,UWP=CenterAndExpand}"
+                                   VerticalOptions="CenterAndExpand"
+                                   Style="{StaticResource VideoTitleStyle}" />
+                            </StackLayout>
+                        </ViewCell>
+                    </DataTemplate>
+                </xForms:SfListView.ItemTemplate>
+            </xForms:SfListView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
