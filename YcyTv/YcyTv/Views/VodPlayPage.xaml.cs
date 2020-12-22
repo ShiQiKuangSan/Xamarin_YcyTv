@@ -1,13 +1,8 @@
 ﻿using System;
 
-using Prism;
-using Prism.Ioc;
-using Prism.Navigation;
-
 using Xamarin.Forms;
 
 using YcyTv.DataBase;
-using YcyTv.Events;
 using YcyTv.Renderers.Constants;
 using YcyTv.Renderers.Events;
 using YcyTv.ViewModels;
@@ -16,6 +11,7 @@ namespace YcyTv.Views
 {
     public partial class VodPlayPage : ContentPage
     {
+        private bool _isInit = true;
         public VodPlayPage()
         {
             InitializeComponent();
@@ -77,11 +73,13 @@ namespace YcyTv.Views
                     await App.Database.UpdateAsync(history);
                 }
 
-                if (history.SeekTime > 0)
+                if (history.SeekTime > 0 && _isInit)
                 {
                     //跳转到历史观看位置
                     VodPlayer.Seek(history.SeekTime);
                 }
+                
+                _isInit = false;
             }
         }
 
@@ -106,6 +104,8 @@ namespace YcyTv.Views
 
                 var url = vm.Urls[index];
 
+                _isInit = true;
+                
                 vm.CuUrl = url;
             }
         }
@@ -115,8 +115,7 @@ namespace YcyTv.Views
             VodPlayer?.Release();
             base.OnDisappearing();
         }
-
-
+                      
         protected override bool OnBackButtonPressed()
         {
             if (!VodPlayer.OnBackPressed())
