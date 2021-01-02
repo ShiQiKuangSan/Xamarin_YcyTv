@@ -26,10 +26,15 @@ namespace YiciTV.Api
 
         public static async Task StartVodPaChong()
         {
-            var types = GetTvTypes();
+            var types = GetTvTypes().ToList();
 
+            var updateList = new List<DicOkzywModel>();
+
+            //获取第一页数据，得到最大页数
             foreach (var type in types)
             {
+                Thread.Sleep(1000);
+
                 //获得第一页数据
                 var json = await GetFistPage(type.TypeId);
 
@@ -51,47 +56,145 @@ namespace YiciTV.Api
 
                     obj.CurrentPage++;
 
-                    if (obj.CurrentPage > obj.Total)
-                        continue;
+                    var cuPage = obj.CurrentPage;
+                    var pageCount = obj.PageCount;
 
-                    for (var i = obj.CurrentPage; i <= obj?.PageCount; i++)
+                    updateList.Add(new DicOkzywModel
                     {
-                        Thread.Sleep(1000);
-
-                        var client = new HttpClient();
-
-                        var response = await client.GetAsync(VodListApi + type.TypeId + "&pg=" + i);
-
-                        json = await response.Content.ReadAsStringAsync();
-
-                        client.Dispose();
-
-                        if (string.IsNullOrWhiteSpace(json))
-                            continue;
-
-                        try
-                        {
-                            obj = JsonConvert.DeserializeObject<OkzywModel>(json);
-
-                            if (obj == null)
-                                continue;
-
-                            if (!obj.List.Any())
-                                continue;
-
-                            SaveVod(obj.List);
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    }
+                        TypeId = type.TypeId,
+                        CurrentPage = cuPage,
+                        PageCount = pageCount
+                    });
                 }
                 catch (Exception)
                 {
                     // ignored
                 }
             }
+
+            var j = 0;
+
+            //横向遍历二维数据
+            while (true)
+            {
+                if (j >= updateList.Count - 1)
+                {
+                    if (updateList.All(x => x.CurrentPage >= x.PageCount))
+                    {
+                        break;
+                    }
+
+                    j = 0;
+                }
+
+                foreach (var item in updateList.Where(item => item.CurrentPage <= item.PageCount))
+                {
+                    Thread.Sleep(1000);
+
+                    var client = new HttpClient();
+
+                    var response = await client.GetAsync(VodListApi + item.TypeId + "&pg=" + item.CurrentPage);
+
+                    var json = await response.Content.ReadAsStringAsync();
+
+                    client.Dispose();
+
+                    try
+                    {
+                        var obj = JsonConvert.DeserializeObject<OkzywModel>(json);
+
+                        if (obj == null)
+                        {
+                            item.CurrentPage++;
+                            continue;
+                        }
+
+                        if (!obj.List.Any())
+                        {
+                            item.CurrentPage++;
+                            continue;
+                        }
+
+                        //保存了第一条数据
+                        SaveVod(obj.List);
+                        item.CurrentPage++;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                        item.CurrentPage++;
+                    }
+                }
+
+                j++;
+            }
+
+
+
+            //foreach (var type in types)
+            //{
+            //    //获得第一页数据
+            //    var json = await GetFistPage(type.TypeId);
+
+            //    if (string.IsNullOrWhiteSpace(json))
+            //        continue;
+
+            //    try
+            //    {
+            //        var obj = JsonConvert.DeserializeObject<OkzywModel>(json);
+
+            //        if (obj == null)
+            //            continue;
+
+            //        if (!obj.List.Any())
+            //            continue;
+
+            //        //保存了第一条数据
+            //        SaveVod(obj.List);
+
+            //        obj.CurrentPage++;
+
+            //        var cuPage = obj.CurrentPage;
+            //        var pageCount = obj.PageCount;
+
+            //        for (var i = cuPage; i <= pageCount; i++)
+            //        {
+            //            Thread.Sleep(1000);
+
+            //            var client = new HttpClient();
+
+            //            var response = await client.GetAsync(VodListApi + type.TypeId + "&pg=" + i);
+
+            //            json = await response.Content.ReadAsStringAsync();
+
+            //            client.Dispose();
+
+            //            if (string.IsNullOrWhiteSpace(json))
+            //                continue;
+
+            //            try
+            //            {
+            //                obj = JsonConvert.DeserializeObject<OkzywModel>(json);
+
+            //                if (obj == null)
+            //                    continue;
+
+            //                if (!obj.List.Any())
+            //                    continue;
+
+            //                SaveVod(obj.List);
+            //            }
+            //            catch (Exception)
+            //            {
+            //                // ignored
+            //            }
+            //        }
+            //    }
+            //    catch (Exception)
+            //    {
+            //        // ignored
+            //    }
+            //}
         }
 
         public static async Task<IEnumerable<VodPlayUrlDb>> UpdateVodDetailUrl(long vodId)
@@ -340,7 +443,7 @@ namespace YiciTV.Api
 
                     if (!vodPlayUrls.Any())
                         continue;
-                    
+
                     listDb.Add(vodPlay);
                     vodPlayUrlList.AddRange(vodPlayUrls);
                 }
@@ -357,6 +460,16 @@ namespace YiciTV.Api
         {
             return new List<VodType>
             {
+                new VodType
+                {
+                    Name = "韩国剧",
+                    TypeId = 15
+                },
+                new VodType
+                {
+                    Name = "日韩动漫",
+                    TypeId = 30
+                },
                 new VodType
                 {
                     Name = "动作片",
@@ -404,11 +517,6 @@ namespace YiciTV.Api
                 },
                 new VodType
                 {
-                    Name = "韩国剧",
-                    TypeId = 15
-                },
-                new VodType
-                {
                     Name = "欧美剧",
                     TypeId = 16
                 },
@@ -452,11 +560,7 @@ namespace YiciTV.Api
                     Name = "国产动漫",
                     TypeId = 29
                 },
-                new VodType
-                {
-                    Name = "日韩动漫",
-                    TypeId = 30
-                },
+
                 new VodType
                 {
                     Name = "欧美动漫",
@@ -473,6 +577,16 @@ namespace YiciTV.Api
                     TypeId = 33
                 },
             };
+        }
+
+
+        private class DicOkzywModel
+        {
+            public int TypeId { get; set; }
+
+            public int CurrentPage { get; set; }
+
+            public int PageCount { get; set; }
         }
 
         private class VodType

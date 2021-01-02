@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,7 +10,6 @@ using Xamarin.Essentials;
 using Xamarin.Forms;
 
 using YcyTv.Api;
-using YcyTv.DataBase;
 using YcyTv.Views;
 
 namespace YcyTv
@@ -25,11 +19,33 @@ namespace YcyTv
         private readonly INavigationService _navigationService;
         private readonly DownloadHelper _downloadHelper;
 
+        private readonly Label _cuProgress;
+        private readonly Label _maxProgress;
+
         public MainPage(INavigationService navigationService)
         {
             InitializeComponent();
             _navigationService = navigationService;
             _downloadHelper = new DownloadHelper();
+
+            _downloadHelper.SetDownloadMaxFileLength += delegate (long l)
+             {
+                 Device.BeginInvokeOnMainThread(() =>
+                 {
+                     _maxProgress.Text = $"/{l}";
+
+                 });
+             };
+
+            _downloadHelper.ShowDownloadPercent+= delegate(long l)
+            {
+                Device.BeginInvokeOnMainThread(() =>
+                {
+                    _cuProgress.Text = l.ToString();
+
+                });
+            };
+
 
             NavigationPage.SetHasNavigationBar(this, false);
 
@@ -40,10 +56,29 @@ namespace YcyTv
 
             Application.Current.Resources.TryGetValue("ItemColor", out var color);
 
+            _cuProgress = new Label
+            {
+                Text = "0",
+                TextColor = Color.White,
+                FontSize = 15,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+            
+            _maxProgress = new Label
+            {
+                Text = "/0",
+                TextColor = Color.White,
+                FontSize = 15,
+                HorizontalOptions = LayoutOptions.Center,
+                VerticalOptions = LayoutOptions.Center
+            };
+
             LoadPopupLayout.PopupView.ContentTemplate = new DataTemplate(() => new StackLayout
             {
+                Orientation = StackOrientation.Vertical,
                 HorizontalOptions = LayoutOptions.CenterAndExpand,
-                VerticalOptions = LayoutOptions.CenterAndExpand,
+                VerticalOptions = LayoutOptions.Center,
                 BackgroundColor = (Color)color,
                 Children =
                 {
@@ -54,10 +89,18 @@ namespace YcyTv
                         FontSize = 20,
                         HorizontalOptions = LayoutOptions.CenterAndExpand,
                         VerticalOptions = LayoutOptions.CenterAndExpand
-                    }
+                    },
+                    new StackLayout
+                    {
+                        Orientation = StackOrientation.Horizontal,
+                        HorizontalOptions = LayoutOptions.CenterAndExpand,
+                        Children =
+                        {
+                            _cuProgress,_maxProgress
+                        }
+                    },
                 }
             });
-
         }
 
         protected override async void OnAppearing()
@@ -100,33 +143,6 @@ namespace YcyTv
             if (status != PermissionStatus.Granted)
             {
                 await Permissions.RequestAsync<Permissions.NetworkState>();
-            }
-
-            var status1 = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
-            var status2 = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
-            var status3 = await Permissions.CheckStatusAsync<Permissions.NetworkState>();
-
-            if (status1 == PermissionStatus.Granted && status2 == PermissionStatus.Granted && status3 == PermissionStatus.Granted && File.Exists(Constants.DatabasePath) && App.Thread == null)
-            {
-                App.Thread = new Thread(App.UpdateVods) { IsBackground = true };
-                App.Thread.Start();
-
-                new Thread(async () =>
-                {
-                    try
-                    {
-                        var d = DateTime.Now.AddMonths(-6);
-
-                        await App.Database.Table<VodPlayHistoryDb>()
-                             .Where(x => DateTime.Parse(x.PlayTime) <= d)
-                             .DeleteAsync();
-                    }
-                    catch (Exception)
-                    {
-                        // ignored
-                    }
-                })
-                { IsBackground = true }.Start();
             }
         }
 

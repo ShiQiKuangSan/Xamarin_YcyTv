@@ -113,9 +113,9 @@ namespace YcyTv.Api
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine("获取远程文件失败！exception：\n" + ex.ToString());
+                    Console.WriteLine("获取远程文件失败！exception：\n" + ex.Message);
                     ret = 3;
-                    throw new Exception("获取远程文件失败[001] exception：\n" + ex.ToString());
+                    throw new Exception("获取远程文件失败[001] exception：\n" + ex.Message);
                 }
                 finally
                 {

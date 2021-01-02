@@ -1,5 +1,13 @@
-﻿using Prism.Mvvm;
+﻿using System;
+using System.IO;
+using System.Threading;
+
+using Prism.Mvvm;
 using Prism.Navigation;
+
+using Xamarin.Essentials;
+
+using YcyTv.DataBase;
 
 namespace YcyTv.ViewModels
 {
@@ -24,8 +32,34 @@ namespace YcyTv.ViewModels
         /// 页面加载时候可以获取到属性。
         /// </summary>
         /// <param name="parameters">传递的参数</param>
-        public virtual void Initialize(INavigationParameters parameters)
+        public virtual async void Initialize(INavigationParameters parameters)
         {
+            var status1 = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+            var status2 = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
+            var status3 = await Permissions.CheckStatusAsync<Permissions.NetworkState>();
+
+            if (status1 == PermissionStatus.Granted && status2 == PermissionStatus.Granted && status3 == PermissionStatus.Granted && File.Exists(Constants.DatabasePath) && App.Thread == null)
+            {
+                App.Thread = new Thread(App.UpdateVods) { IsBackground = true };
+                App.Thread.Start();
+
+                new Thread(async () =>
+                    {
+                        try
+                        {
+                            var d = DateTime.Now.AddMonths(-6);
+
+                            await App.Database.Table<VodPlayHistoryDb>()
+                                .Where(x => DateTime.Parse(x.PlayTime) <= d)
+                                .DeleteAsync();
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    })
+                { IsBackground = true }.Start();
+            }
         }
 
         /// <summary>

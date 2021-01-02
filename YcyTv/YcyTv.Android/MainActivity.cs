@@ -12,6 +12,7 @@ using Syncfusion.XForms.Android.PopupLayout;
 
 namespace YcyTv.Droid
 {
+    [Register("YcyTv.Droid.MainActivity")]
     [Activity(Label = "YcyTv", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.KeyboardHidden)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
@@ -28,7 +29,7 @@ namespace YcyTv.Droid
                 .SetPlayerFactory(IjkPlayerFactory.Create())
                 .SetPlayOnMobileNetwork(true)
                 .Build();
-
+            
             LoadApplication(new App());
         }
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
