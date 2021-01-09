@@ -12,7 +12,6 @@ using Syncfusion.XForms.Android.PopupLayout;
 
 namespace YcyTv.Droid
 {
-    [Register("YcyTv.Droid.MainActivity")]
     [Activity(Label = "YcyTv", Icon = "@mipmap/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation | ConfigChanges.UiMode | ConfigChanges.ScreenLayout | ConfigChanges.SmallestScreenSize | ConfigChanges.KeyboardHidden)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {

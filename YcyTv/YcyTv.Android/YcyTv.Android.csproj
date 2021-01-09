@@ -60,6 +60,12 @@
     <MandroidI18n>CJK;Mideast;Rare;West;Other</MandroidI18n>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DkVideoPlayer">
+      <HintPath>..\..\Libs\DkVideoPlayer.dll</HintPath>
+    </Reference>
+    <Reference Include="DkVideoPlayer.So">
+      <HintPath>..\..\Libs\DkVideoPlayer.So.dll</HintPath>
+    </Reference>
     <Reference Include="Mono.Android" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -148,14 +154,6 @@
     <Folder Include="Resources\drawable\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\DkVideoPlayer\DkVideoPlayer.So\DkVideoPlayer.So.csproj">
-      <Project>{d2cfda23-6894-451d-95a3-2a98b8e2266a}</Project>
-      <Name>DkVideoPlayer.So</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\DkVideoPlayer\DkVideoPlayer\DkVideoPlayer.csproj">
-      <Project>{4313595d-6afd-4041-bcfc-60651bca6dd5}</Project>
-      <Name>DkVideoPlayer</Name>
-    </ProjectReference>
     <ProjectReference Include="..\YcyTv\YcyTv.csproj">
       <Project>{83DBBCD6-28DD-4D6E-92D0-DFCC1101A8EF}</Project>
       <Name>YcyTv</Name>

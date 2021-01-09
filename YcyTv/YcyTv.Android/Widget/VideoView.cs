@@ -153,7 +153,6 @@ namespace YcyTv.Droid.Widget
 
             VideoController = controller;
 
-            var d = this; //= IjkPlayerFactory.Create();
             // Register Events  
             AddOnStateChangeListener(new StateChangeListener(this));
         }

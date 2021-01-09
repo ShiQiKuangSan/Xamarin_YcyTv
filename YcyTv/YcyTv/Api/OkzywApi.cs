@@ -128,73 +128,6 @@ namespace YiciTV.Api
 
                 j++;
             }
-
-
-
-            //foreach (var type in types)
-            //{
-            //    //获得第一页数据
-            //    var json = await GetFistPage(type.TypeId);
-
-            //    if (string.IsNullOrWhiteSpace(json))
-            //        continue;
-
-            //    try
-            //    {
-            //        var obj = JsonConvert.DeserializeObject<OkzywModel>(json);
-
-            //        if (obj == null)
-            //            continue;
-
-            //        if (!obj.List.Any())
-            //            continue;
-
-            //        //保存了第一条数据
-            //        SaveVod(obj.List);
-
-            //        obj.CurrentPage++;
-
-            //        var cuPage = obj.CurrentPage;
-            //        var pageCount = obj.PageCount;
-
-            //        for (var i = cuPage; i <= pageCount; i++)
-            //        {
-            //            Thread.Sleep(1000);
-
-            //            var client = new HttpClient();
-
-            //            var response = await client.GetAsync(VodListApi + type.TypeId + "&pg=" + i);
-
-            //            json = await response.Content.ReadAsStringAsync();
-
-            //            client.Dispose();
-
-            //            if (string.IsNullOrWhiteSpace(json))
-            //                continue;
-
-            //            try
-            //            {
-            //                obj = JsonConvert.DeserializeObject<OkzywModel>(json);
-
-            //                if (obj == null)
-            //                    continue;
-
-            //                if (!obj.List.Any())
-            //                    continue;
-
-            //                SaveVod(obj.List);
-            //            }
-            //            catch (Exception)
-            //            {
-            //                // ignored
-            //            }
-            //        }
-            //    }
-            //    catch (Exception)
-            //    {
-            //        // ignored
-            //    }
-            //}
         }
 
         public static async Task<IEnumerable<VodPlayUrlDb>> UpdateVodDetailUrl(long vodId)
@@ -217,16 +150,20 @@ namespace YiciTV.Api
             //解析url
             vodPlayUrlList = GetPlayUrl(detail).ToList();
 
+            vodPlayDb.CreateTime = string.IsNullOrWhiteSpace(detail.VodTime) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : detail.VodTime; 
+
             await App.Database.Table<VodPlayUrlDb>()
                 .Where(x => x.VodId == vodId)
                 .DeleteAsync();
 
             await App.Database.InsertAllAsync(vodPlayUrlList);
 
+            await App.Database.UpdateAsync(vodPlayDb);
+
             return vodPlayUrlList;
         }
 
-        private static async Task<IList<OkzywDetailModel>> GetVodDetail(IList<long> vodIdList)
+        private static async Task<IList<OkzywDetailModel>> GetVodDetail(IEnumerable<long> vodIdList)
         {
             var items = new List<OkzywDetailModel>();
             if (!vodIdList.Any())
@@ -317,24 +254,9 @@ namespace YiciTV.Api
         private static async void SaveVod(IEnumerable<OkzywListModel> list)
         {
             var vodIds = list.Select(x => x.VodId).ToList();
-            var ids = new List<long>();
-
-            foreach (var id in vodIds)
-            {
-                var count = await App.Database.Table<VodPlayDb>()
-                    .FirstOrDefaultAsync(x => x.VodId == id);
-
-                if (count == null)
-                {
-                    ids.Add(id);
-                }
-            }
-
-            if (!ids.Any())
-                return;
 
             //添加视频数据到数据库
-            var details = await GetVodDetail(ids);
+            var details = await GetVodDetail(vodIds);
 
             if (!details.Any())
                 return;
@@ -347,7 +269,21 @@ namespace YiciTV.Api
                 var vodPlay = await App.Database.Table<VodPlayDb>()
                     .FirstOrDefaultAsync(x => x.VodId == detail.VodId);
 
-                if (vodPlay != null) continue;
+                if (vodPlay != null)
+                {
+                    vodPlay.CreateTime = string.IsNullOrWhiteSpace(detail.VodTime) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : detail.VodTime;
+                    //更新集数
+                    var vodPlayUrls = GetPlayUrl(detail).ToList();
+
+                    await App.Database.Table<VodPlayUrlDb>()
+                        .Where(x => x.VodId == vodPlay.VodId)
+                        .DeleteAsync();
+
+                    await App.Database.InsertAllAsync(vodPlayUrls);
+
+                    await App.Database.UpdateAsync(vodPlay);
+                }
+                else
                 {
                     if (string.IsNullOrWhiteSpace(detail.VodTypeName))
                     {
@@ -436,7 +372,8 @@ namespace YiciTV.Api
                         VodLang = detail.VodLang,
                         VodYearId = vodPlayYear.Id,
                         VodYear = detail.VodYear,
-                        VodContent = detail.VodContent
+                        VodContent = detail.VodContent,
+                        CreateTime = string.IsNullOrWhiteSpace(detail.VodTime) ? DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") : detail.VodTime
                     };
 
                     var vodPlayUrls = GetPlayUrl(detail).ToList();
@@ -641,7 +578,7 @@ namespace YiciTV.Api
             /// 视频编号
             /// </summary>
             [JsonProperty("vod_id")]
-            public int VodId { get; set; }
+            public long VodId { get; set; }
         }
 
         public class OkzywDetailListModel
