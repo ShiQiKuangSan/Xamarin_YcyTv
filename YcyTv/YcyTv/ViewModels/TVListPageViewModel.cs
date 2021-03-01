@@ -154,7 +154,6 @@ namespace YcyTv.ViewModels
             }
         }
 
-
         public override async void Initialize(INavigationParameters parameters)
         {
             _pageIndex = 0;
@@ -167,6 +166,8 @@ namespace YcyTv.ViewModels
             {
                 // ignored
             }
+
+            base.Initialize(parameters);
         }
 
 

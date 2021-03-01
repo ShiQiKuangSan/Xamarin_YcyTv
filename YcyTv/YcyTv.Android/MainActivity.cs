@@ -23,14 +23,17 @@ namespace YcyTv.Droid
             global::Xamarin.Forms.Forms.Init(this, savedInstanceState);
             CachedImageRenderer.Init(true);
             SfPopupLayoutRenderer.Init();
+            //RequestWindowFeature(Android.Views.WindowFeatures.NoTitle);
+            Window.SetFlags(Android.Views.WindowManagerFlags.Fullscreen, Android.Views.WindowManagerFlags.Fullscreen);
 
             VideoViewManager.Config = VideoViewConfig.NewBuilder()
                 .SetPlayerFactory(IjkPlayerFactory.Create())
                 .SetPlayOnMobileNetwork(true)
                 .Build();
-            
+
             LoadApplication(new App());
         }
+
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)
         {
             Xamarin.Essentials.Platform.OnRequestPermissionsResult(requestCode, permissions, grantResults);

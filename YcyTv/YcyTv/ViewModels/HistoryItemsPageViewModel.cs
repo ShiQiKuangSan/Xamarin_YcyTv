@@ -79,6 +79,11 @@ namespace YcyTv.ViewModels
             }
         }
 
+        public override void Initialize(INavigationParameters parameters)
+        {
+            base.Initialize(parameters);
+        }
+
         /// <summary>
         /// 加载更多的时，上次加载的数据是否存在，如果不存在就不继续查找下一页了
         /// </summary>

@@ -1,12 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:prism="http://prismlibrary.com"
-             NavigationPage.HasNavigationBar="False"
-             xmlns:xForms="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:forms="clr-namespace:FFImageLoading.Forms;assembly=FFImageLoading.Forms"
+             xmlns:xForms="clr-namespace:Syncfusion.ListView.XForms;assembly=Syncfusion.SfListView.XForms"
              xmlns:models="clr-namespace:YcyTv.Models;assembly=YcyTv"
              xmlns:viewModels="clr-namespace:YcyTv.ViewModels;assembly=YcyTv"
+             NavigationPage.HasNavigationBar="False"
              prism:ViewModelLocator.AutowireViewModel="True"
              x:Class="YcyTv.Views.TVListPage"
              x:DataType="viewModels:TVListPageViewModel"
@@ -15,8 +15,8 @@
         <ResourceDictionary>
             <Style x:Key="VideoImageStyle" TargetType="forms:CachedImage">
                 <Setter Property="Aspect" Value="AspectFill" />
-                <Setter Property="WidthRequest" Value="{OnPlatform Android=130,UWP=320}" />
-                <Setter Property="HeightRequest" Value="{OnPlatform Android=140,UWP=340}" />
+                <Setter Property="WidthRequest" Value="130" />
+                <Setter Property="HeightRequest" Value="140" />
             </Style>
             <Style x:Key="VideoTitleStyle" TargetType="Label">
                 <Setter Property="TextColor" Value="White" />

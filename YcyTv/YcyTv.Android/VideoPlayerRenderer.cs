@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Android.Content;
 using Android.Views;
 
+using DkVideoPlayer.VideoPlayer.Player;
+
 using Xamarin.Forms;
 using Xamarin.Forms.Platform.Android;
 

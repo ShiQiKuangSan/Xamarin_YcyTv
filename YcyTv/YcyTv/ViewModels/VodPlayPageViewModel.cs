@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Prism.Navigation;
 using YcyTv.Models;
+using System.Threading.Tasks;
 
 namespace YcyTv.ViewModels
 {
@@ -45,9 +46,9 @@ namespace YcyTv.ViewModels
                 {
                     VodTitle = $"{Vod.VodName}";
                 }
-
             }
 
+            base.Initialize(parameters);
         }
     }
 }

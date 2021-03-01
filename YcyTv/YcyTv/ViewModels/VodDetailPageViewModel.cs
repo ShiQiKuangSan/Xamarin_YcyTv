@@ -58,6 +58,8 @@ namespace YcyTv.ViewModels
 
                 PlayUrls = await GetPlayUrls(Vod.VodId);
             }
+
+            base.Initialize(parameters);
         }
 
         private async void OnVodPlay(SfListView sfListView)

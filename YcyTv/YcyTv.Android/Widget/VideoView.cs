@@ -153,6 +153,7 @@ namespace YcyTv.Droid.Widget
 
             VideoController = controller;
 
+            this.ScreenScaleType = VideoView.SCREEN_SCALE_MATCH_PARENT;
             // Register Events  
             AddOnStateChangeListener(new StateChangeListener(this));
         }

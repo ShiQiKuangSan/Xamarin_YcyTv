@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
+using System.Threading.Tasks;
 
 using Prism.Mvvm;
 using Prism.Navigation;
@@ -34,6 +35,11 @@ namespace YcyTv.ViewModels
         /// <param name="parameters">传递的参数</param>
         public virtual async void Initialize(INavigationParameters parameters)
         {
+            await CheckUpdateData();
+        }
+
+        protected async Task CheckUpdateData()
+        {
             var status1 = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
             var status2 = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
             var status3 = await Permissions.CheckStatusAsync<Permissions.NetworkState>();
@@ -44,20 +50,20 @@ namespace YcyTv.ViewModels
                 App.Thread.Start();
 
                 new Thread(async () =>
+                {
+                    try
                     {
-                        try
-                        {
-                            var d = DateTime.Now.AddMonths(-6);
+                        var d = DateTime.Now.AddMonths(-6);
 
-                            await App.Database.Table<VodPlayHistoryDb>()
-                                .Where(x => DateTime.Parse(x.PlayTime) <= d)
-                                .DeleteAsync();
-                        }
-                        catch (Exception)
-                        {
-                            // ignored
-                        }
-                    })
+                        await App.Database.Table<VodPlayHistoryDb>()
+                            .Where(x => DateTime.Parse(x.PlayTime) <= d)
+                            .DeleteAsync();
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                })
                 { IsBackground = true }.Start();
             }
         }

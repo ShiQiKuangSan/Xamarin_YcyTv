@@ -2,7 +2,7 @@
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <SelectedDevice>pixel_2_q_10_0_-_api_29</SelectedDevice>
-    <ActiveDebugProfile>Huawei Nexus 6P</ActiveDebugProfile>
+    <ActiveDebugProfile>pixel_2_q_10_0_-_api_29</ActiveDebugProfile>
     <DefaultDevice>pixel_2_q_10_0_-_api_29</DefaultDevice>
     <AndroidDesignerPreferredTheme>MainTheme</AndroidDesignerPreferredTheme>
     <ProjectView>ProjectFiles</ProjectView>
